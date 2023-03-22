@@ -145,7 +145,16 @@ def main():
         if not daemonize:
             break
 
-        time.sleep(config["poll_interval_mins"]*60)
+        # Only sleep if the long polling request didn't return any messages.
+        # Otherwise we should keep trying to retrieve messages in order to
+        # drain the queue as SQS may not have returned all available / max
+        # requested. Even an empty response doesn't guarantee the queue
+        # is empty, so this is just a heuristic to balance timely processing
+        # with SQS requests when the polling interval is non-zero.
+        if len(sqs_messages) == 0:
+            time.sleep(config["poll_interval_mins"]*60)
+        else:
+            print(f"Received {len(sqs_messages)} messages")
 
 
 if __name__ == "__main__":
