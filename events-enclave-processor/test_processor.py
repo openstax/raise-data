@@ -8,7 +8,7 @@ from fastavro import writer, parse_schema
 
 def test_process_single_message_new_data(mocker):
     s3_client = boto3.client("s3")
-    sqs_client = boto3.client("sqs")
+    sqs_client = boto3.client("sqs", region_name="tatooine")
     s3_stubber = botocore.stub.Stubber(s3_client)
     sqs_stubber = botocore.stub.Stubber(sqs_client)
 
@@ -152,7 +152,7 @@ def test_process_single_message_new_data(mocker):
 
 def test_process_single_message_duplicate_data(mocker):
     s3_client = boto3.client("s3")
-    sqs_client = boto3.client("sqs")
+    sqs_client = boto3.client("sqs", region_name="tatooine")
     s3_stubber = botocore.stub.Stubber(s3_client)
     sqs_stubber = botocore.stub.Stubber(sqs_client)
 
@@ -267,7 +267,7 @@ def test_process_single_message_duplicate_data(mocker):
 
 def test_process_single_message_bad_event(mocker):
     s3_client = boto3.client("s3")
-    sqs_client = boto3.client("sqs")
+    sqs_client = boto3.client("sqs", region_name="tatooine")
     s3_stubber = botocore.stub.Stubber(s3_client)
     sqs_stubber = botocore.stub.Stubber(sqs_client)
 
