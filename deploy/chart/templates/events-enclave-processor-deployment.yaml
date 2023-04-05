@@ -1,0 +1,38 @@
+{{- range .Values.eventsEnclaveProcessor.instances }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $.Chart.Name }}-events-enclave-proc-{{ .name }}
+  labels:
+    app: {{ $.Chart.Name }}-events-enclave-proc-{{ .name }}
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: {{ $.Chart.Name }}-events-enclave-proc-{{ .name }}
+  template:
+    metadata:
+      labels:
+        app: {{ $.Chart.Name }}-events-enclave-proc-{{ .name }}
+    spec:
+      serviceAccountName: raise-data-events-enclave-processor
+      containers:
+        - name: {{ $.Chart.Name }}-events-enclave-proc-{{ .name }}
+          image: {{ $.Values.eventsEnclaveProcessor.image.name }}:{{ $.Values.eventsEnclaveProcessor.image.tag }}
+          imagePullPolicy: Always
+          env:
+            - name: SQS_QUEUE
+              value: {{ .sqsQueue }}
+            - name: POLL_INTERVAL_MINS
+              value: "{{ .pollIntervalMins }}"
+            - name: JSON_OUTPUT_S3_BUCKET
+              value: {{ .jsonOutputS3Bucket }}
+            - name: JSON_OUTPUT_S3_KEY
+              value: {{ .jsonOutputS3Key }}
+          resources:
+                limits:
+                  cpu: "250m"
+{{- end }}

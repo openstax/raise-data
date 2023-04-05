@@ -1,0 +1,31 @@
+version: 0.2
+
+env:
+  shell: bash
+  secrets-manager:
+    DOCKERHUB_USERNAME: "dockerhub:username"
+    DOCKERHUB_TOKEN: "dockerhub:token"
+    SLACK_WEBHOOKURL: "slack:k12stream"
+
+phases:
+  pre_build:
+    commands:
+      - echo $DOCKERHUB_TOKEN | docker login --username $DOCKERHUB_USERNAME --password-stdin
+      - export IMAGE_NAME=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$IMAGE_REPO_NAME
+      - export IMAGE_TAG=${COMMIT_ID:0:8}
+      - echo $IMAGE_NAME > events-enclave-processor-image-name.txt
+      - echo $IMAGE_TAG > events-enclave-processor-image-tag.txt
+  build:
+    commands:
+      - docker build events-enclave-processor/. -t $IMAGE_NAME:$IMAGE_TAG
+    on-failure: ABORT
+    finally:
+      - "if [[ $CODEBUILD_BUILD_SUCCEEDING != 1 ]]; then curl -X POST -H 'Content-type: application/json' --data '{\"text\":\"Error in raise-data pipeline!\"}' $SLACK_WEBHOOKURL; fi"
+  post_build:
+    commands:
+      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+      - docker push $IMAGE_NAME:$IMAGE_TAG
+artifacts:
+  files:
+    - events-enclave-processor-image-name.txt
+    - events-enclave-processor-image-tag.txt
