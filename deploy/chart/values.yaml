@@ -1,0 +1,20 @@
+eventsEnclaveProcessor:
+  image:
+    name: <account>.dkr.ecr.<region>.amazonaws.com/raise-data-events-enclave-processor
+    tag: sha
+  instances:
+    - name: content-loaded-v1
+      sqsQueue: raise-data-events-content_loaded_v1-enclave
+      pollIntervalMins: 1
+      jsonOutputS3Bucket: raise-data
+      jsonOutputS3Key: "events/content_loaded_v1.json"
+    - name: ib-pset-problem-attempted-v1
+      sqsQueue: raise-data-events-ib_pset_problem_attempted_v1-enclave
+      pollIntervalMins: 1
+      jsonOutputS3Bucket: raise-data
+      jsonOutputS3Key: "events/ib_pset_problem_attempted_v1.json"
+    - name: ib-input-submitted-v1
+      sqsQueue: raise-data-events-ib_input_submitted_v1-enclave
+      pollIntervalMins: 1
+      jsonOutputS3Bucket: raise-data
+      jsonOutputS3Key: "events/ib_input_submitted_v1.json"
