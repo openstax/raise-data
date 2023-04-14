@@ -25,6 +25,7 @@ jobs:
         run: |
           pip install flake8 pytest pytest-cov pytest-mock
           pip install -r events-enclave-processor/requirements.txt
+          pip install -r events-loader/requirements.txt
       - name: Lint
         run: flake8
       - name: Test
