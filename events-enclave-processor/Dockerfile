@@ -7,4 +7,4 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-CMD ["python", "./processor.py", "--daemonize"]
+CMD ["python", "-u", "./processor.py", "--daemonize"]
