@@ -5,9 +5,22 @@ from sqlalchemy import pool
 
 from alembic import context
 
+from db.schema import Base
+import os
+
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
+
+# Using an environment variable for tinkering around, but we may want to
+# eventually use a different pattern
+config.set_main_option(
+    'sqlalchemy.url',
+    os.getenv(
+        'SQLALCHEMY_DATABASE_URL',
+        'postgresql://pguser:pgpassword@localhost/raisemetrics'
+    )
+)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
@@ -18,7 +31,7 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-target_metadata = None
+target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:

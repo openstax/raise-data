@@ -16,6 +16,8 @@ services:
     image: postgres:15
     volumes:
       - pgdata:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
     networks:
       - dashboard
     environment:
