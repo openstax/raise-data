@@ -32,7 +32,4 @@ spec:
               value: {{ .jsonOutputS3Bucket }}
             - name: JSON_OUTPUT_S3_KEY
               value: {{ .jsonOutputS3Key }}
-          resources:
-                limits:
-                  cpu: "250m"
 {{- end }}
