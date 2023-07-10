@@ -29,6 +29,6 @@ jobs:
       - name: Lint
         run: flake8
       - name: Test
-        run: pytest --cov-report=term --cov-report=html --cov
+        run: pytest --cov-report=term --cov-report=xml --cov
       - name: Upload Code Coverage
         uses: codecov/codecov-action@v2
