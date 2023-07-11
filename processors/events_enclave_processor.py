@@ -103,6 +103,7 @@ def put_json_data(s3_client, bucket, key, data):
 
 
 def main():
+    logging.info("Starting processor...")
     parser = argparse.ArgumentParser(description="")
     parser.add_argument(
         "--daemonize",
