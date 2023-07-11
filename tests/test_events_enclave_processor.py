@@ -1,4 +1,4 @@
-import processor
+from raise_data.processors import events_enclave_processor
 import json
 import io
 import boto3
@@ -144,7 +144,7 @@ def test_process_single_message_new_data(mocker):
         }
     )
     mocker.patch("sys.argv", [""])
-    processor.main()
+    events_enclave_processor.main()
 
     s3_stubber.assert_no_pending_responses()
     sqs_stubber.assert_no_pending_responses()
@@ -259,7 +259,7 @@ def test_process_single_message_duplicate_data(mocker):
         }
     )
     mocker.patch("sys.argv", [""])
-    processor.main()
+    events_enclave_processor.main()
 
     s3_stubber.assert_no_pending_responses()
     sqs_stubber.assert_no_pending_responses()
@@ -336,7 +336,7 @@ def test_process_single_message_bad_event(mocker):
         }
     )
     mocker.patch("sys.argv", [""])
-    processor.main()
+    events_enclave_processor.main()
 
     s3_stubber.assert_no_pending_responses()
     sqs_stubber.assert_no_pending_responses()

@@ -1,4 +1,4 @@
-import loader
+from raise_data.loaders import events_loader
 import json
 import boto3
 import botocore.stub
@@ -100,7 +100,7 @@ def test_process_single_message_new_data(mocker):
     mocker.patch("boto3.client", lambda client: mocker_map[client])
 
     mocker.patch("sys.argv", ["", "testbucket", "testprefix", "testqueue"])
-    loader.main()
+    events_loader.main()
 
     s3_stubber.assert_no_pending_responses()
     sqs_stubber.assert_no_pending_responses()
