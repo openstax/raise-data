@@ -3,12 +3,14 @@ import time
 import argparse
 import boto3
 import json
+import logging
 from fastavro import reader
 from urllib.parse import unquote
 
 SQS_WAIT_TIME_SECS = 20
 SQS_MAX_MESSAGES = 10
 
+logging.basicConfig(level=logging.INFO)
 
 class ProcessorException(Exception):
     pass
@@ -71,7 +73,7 @@ def process_s3_notification(
         s3_url = f"s3://{bucket}/{key}"
 
         if s3_url in output_data["data_sources"]:
-            print(f"Ignoring previously processed file: {s3_url}")
+            logging.info(f"Ignoring previously processed file: {s3_url}")
             continue
 
         output_data["data_sources"].append(s3_url)
@@ -140,7 +142,7 @@ def main():
                     ReceiptHandle=receipt_handle
                 )
             except ProcessorException as e:
-                print(f"Failed processing s3 notification: {e}")
+                logging.error(f"Failed processing s3 notification: {e}")
 
         if not daemonize:
             break
@@ -154,7 +156,7 @@ def main():
         if len(sqs_messages) == 0:
             time.sleep(config["poll_interval_mins"]*60)
         else:
-            print(f"Received {len(sqs_messages)} messages")
+            logging.info(f"Received {len(sqs_messages)} messages")
 
 
 if __name__ == "__main__":
