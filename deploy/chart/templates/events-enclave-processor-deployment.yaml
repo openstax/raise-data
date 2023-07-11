@@ -18,11 +18,13 @@ spec:
       labels:
         app: {{ $.Chart.Name }}-events-enclave-proc-{{ .name }}
     spec:
-      serviceAccountName: raise-data-events-enclave-processor
+      serviceAccountName: raise-data
       containers:
         - name: {{ $.Chart.Name }}-events-enclave-proc-{{ .name }}
           image: {{ $.Values.eventsEnclaveProcessor.image.name }}:{{ $.Values.eventsEnclaveProcessor.image.tag }}
           imagePullPolicy: Always
+          command: ["events-enclave-processor"]
+          args: ["--daemonize"]
           env:
             - name: SQS_QUEUE
               value: {{ .sqsQueue }}

@@ -22,13 +22,10 @@ jobs:
       - name: Display Python version
         run: python -c "import sys; print(sys.version)"
       - name: Install dependencies
-        run: |
-          pip install flake8 pytest pytest-cov pytest-mock
-          pip install -r events-enclave-processor/requirements.txt
-          pip install -r events-loader/requirements.txt
+        run: pip install .[test]
       - name: Lint
         run: flake8
       - name: Test
-        run: pytest --cov-report=term --cov-report=xml --cov
+        run: pytest --cov-report=term --cov-report=xml --cov=raise_data
       - name: Upload Code Coverage
         uses: codecov/codecov-action@v2

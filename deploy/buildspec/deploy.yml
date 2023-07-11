@@ -16,11 +16,11 @@ phases:
   pre_build:
     commands:
       - aws eks update-kubeconfig --name $K8S_CLUSTER_NAME
-      - export EVENTS_ENCLAVE_PROCESSOR_IMAGE_NAME=$(cat $CODEBUILD_SRC_DIR_events_enclave_processor_build_output/events-enclave-processor-image-name.txt)
-      - export EVENTS_ENCLAVE_PROCESSOR_IMAGE_TAG=$(cat $CODEBUILD_SRC_DIR_events_enclave_processor_build_output/events-enclave-processor-image-tag.txt)
+      - export DATA_IMAGE_NAME=$(cat $CODEBUILD_SRC_DIR_data_build_output/data-image-name.txt)
+      - export DATA_IMAGE_TAG=$(cat $CODEBUILD_SRC_DIR_data_build_output/data-image-tag.txt)
       - touch ./values.yaml
-      - yq e -i '.eventsEnclaveProcessor.image.name=strenv(EVENTS_ENCLAVE_PROCESSOR_IMAGE_NAME)' ./values.yaml
-      - yq e -i '.eventsEnclaveProcessor.image.tag=strenv(EVENTS_ENCLAVE_PROCESSOR_IMAGE_TAG)' ./values.yaml
+      - yq e -i '.eventsEnclaveProcessor.image.name=strenv(DATA_IMAGE_NAME)' ./values.yaml
+      - yq e -i '.eventsEnclaveProcessor.image.tag=strenv(DATA_IMAGE_TAG)' ./values.yaml
   build:
     commands:
       - helm upgrade -n raise --install -f ./values.yaml raise-data deploy/chart/

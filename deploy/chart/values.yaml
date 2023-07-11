@@ -1,6 +1,6 @@
 eventsEnclaveProcessor:
   image:
-    name: <account>.dkr.ecr.<region>.amazonaws.com/raise-data-events-enclave-processor
+    name: <account>.dkr.ecr.<region>.amazonaws.com/raise-data
     tag: sha
   instances:
     - name: content-loaded-v1
