@@ -12,6 +12,7 @@ SQS_MAX_MESSAGES = 10
 
 logging.basicConfig(level=logging.INFO)
 
+
 class ProcessorException(Exception):
     pass
 
