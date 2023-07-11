@@ -155,11 +155,11 @@ def main():
         # requested. Even an empty response doesn't guarantee the queue
         # is empty, so this is just a heuristic to balance timely processing
         # with SQS requests when the polling interval is non-zero.
-        if len(sqs_messages) == 0:
+        if len(sqs_messages) == 0:  # pragma: no cover
             time.sleep(config["poll_interval_mins"]*60)
-        else:
+        else:  # pragma: no cover
             logging.info(f"Received {len(sqs_messages)} messages")
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     main()
