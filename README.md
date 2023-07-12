@@ -1,6 +1,6 @@
 # RAISE Data
 
-This repo includes backend code used to process / wrangle RAISE data. We utilize an event-driven produce-consumer architecture backed by SNS and SQS. The consumers are realized via simple processors that pull messages from SQS and transform data in a consumer specific manner (e.g. for enclaves, dashboards, etc.). The repo also contains loaders that can be used by devs to "replay" historical messages (typically this is used to backfill data for new consumers).
+This repo includes backend code used to process / wrangle RAISE data. We utilize an event-driven producer-consumer architecture backed by SNS and SQS. The consumers are realized via simple processors that pull messages from SQS and transform data in a consumer specific manner (e.g. for enclaves, dashboards, etc.). The repo also contains loaders that can be used by devs to "replay" historical messages (typically this is used to backfill data for new consumers).
 
 ## Developers
 
