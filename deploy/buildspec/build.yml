@@ -13,11 +13,11 @@ phases:
       - echo $DOCKERHUB_TOKEN | docker login --username $DOCKERHUB_USERNAME --password-stdin
       - export IMAGE_NAME=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$IMAGE_REPO_NAME
       - export IMAGE_TAG=${COMMIT_ID:0:8}
-      - echo $IMAGE_NAME > events-enclave-processor-image-name.txt
-      - echo $IMAGE_TAG > events-enclave-processor-image-tag.txt
+      - echo $IMAGE_NAME > data-image-name.txt
+      - echo $IMAGE_TAG > data-image-tag.txt
   build:
     commands:
-      - docker build events-enclave-processor/. -t $IMAGE_NAME:$IMAGE_TAG
+      - docker build . -t $IMAGE_NAME:$IMAGE_TAG
     on-failure: ABORT
     finally:
       - "if [[ $CODEBUILD_BUILD_SUCCEEDING != 1 ]]; then curl -X POST -H 'Content-type: application/json' --data '{\"text\":\"Error in raise-data pipeline!\"}' $SLACK_WEBHOOKURL; fi"
@@ -27,5 +27,5 @@ phases:
       - docker push $IMAGE_NAME:$IMAGE_TAG
 artifacts:
   files:
-    - events-enclave-processor-image-name.txt
-    - events-enclave-processor-image-tag.txt
+    - data-image-name.txt
+    - data-image-tag.txt
