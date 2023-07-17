@@ -4,6 +4,8 @@ env:
   shell: bash
   secrets-manager:
     SLACK_WEBHOOKURL: "slack:k12stream"
+    DASHBOARD_POSTGRES_USER: "rds-raise-dashboard:username"
+    DASHBOARD_POSTGRES_PASSWORD: "rds-raise-dashboard:password"
 
 phases:
   install:
@@ -21,6 +23,9 @@ phases:
       - touch ./values.yaml
       - yq e -i '.eventsEnclaveProcessor.image.name=strenv(DATA_IMAGE_NAME)' ./values.yaml
       - yq e -i '.eventsEnclaveProcessor.image.tag=strenv(DATA_IMAGE_TAG)' ./values.yaml
+      - yq e -i '.dashboard.pgUsername=strenv(DASHBOARD_POSTGRES_USER)' ./values.yaml
+      - yq e -i '.dashboard.pgPassword=strenv(DASHBOARD_POSTGRES_PASSWORD)' ./values.yaml
+      - yq e -i '.dashboard.pgServer=strenv(DASHBOARD_POSTGRES_SERVER)' ./values.yaml
   build:
     commands:
       - helm upgrade -n raise --install -f ./values.yaml raise-data deploy/chart/
