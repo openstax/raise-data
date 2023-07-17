@@ -1,0 +1,32 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ .Chart.Name }}-tls-dashboard
+spec:
+  entryPoints:
+    - websecure
+  tls:
+    secretName: {{ .Values.dashboard.domain }}-tls
+  routes:
+    - match: "Host(`{{ .Values.dashboard.domain }}`)"
+      kind: Rule
+      services:
+        - name: {{ .Chart.Name }}-dashboard
+          port: 80
+
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ .Chart.Name }}-dashboard
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: "Host(`{{ .Values.dashboard.domain }}`)"
+      kind: Rule
+      middlewares:
+        - name: {{ .Chart.Name }}-dashboard-redirect
+      services:
+        - name: {{ .Chart.Name }}-dashboard
+          port: 80

@@ -18,3 +18,10 @@ eventsEnclaveProcessor:
       pollIntervalMins: 1
       jsonOutputS3Bucket: raise-data
       jsonOutputS3Key: "events/ib_input_submitted_v1.json"
+dashboard:
+  domain: metrics.raiselearning.org
+  replicas: 2
+  metabaseVersion: v0.46.6
+  pgServer:
+  pgUsername:
+  pgPassword:

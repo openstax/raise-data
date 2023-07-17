@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}-dashboard
+  labels:
+    app: {{ .Chart.Name }}-dashboard
+spec:
+  replicas: {{ .Values.dashboard.replicas }}
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}-dashboard
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}-dashboard
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}-dashboard
+          image: metabase/metabase:{{ .Values.dashboard.metabaseVersion }}
+          imagePullPolicy: Always
+          env:
+            - name: MB_DB_TYPE
+              value: postgres
+            - name: MB_DB_DBNAME
+              value: metabase
+            - name: MB_DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Chart.Name }}-dashboard
+                  key: pgUsername
+            - name: MB_DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Chart.Name }}-dashboard
+                  key: pgPassword
+            - name: MB_DB_HOST
+              value: {{ .Values.dashboard.pgServer }}
+            - name: MB_DB_PORT
+              value: "5432"
+          ports:
+            - containerPort: 3000
