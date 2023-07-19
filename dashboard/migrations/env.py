@@ -5,9 +5,25 @@ from sqlalchemy import pool
 
 from alembic import context
 
+from db.schema import Base
+import os
+
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
+
+# We target "real" databases using environment variables and otherwise
+# default to the dev environment value for sqlalchemy.url in alembic.ini
+pg_server = os.getenv('POSTGRES_SERVER')
+pg_db = os.getenv('POSTGRES_DB')
+pg_user = os.getenv('POSTGRES_USER')
+pg_password = os.getenv('POSTGRES_PASSWORD')
+
+if all(val is not None for val in [pg_server, pg_db, pg_user, pg_password]):
+    config.set_main_option(
+        'sqlalchemy.url',
+        f'postgresql://{pg_user}:{pg_password}@{pg_server}/{pg_db}'
+    )
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
@@ -18,7 +34,7 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-target_metadata = None
+target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
