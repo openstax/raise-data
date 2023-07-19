@@ -59,3 +59,19 @@ def processor_runner(
             time.sleep(poll_interval_mins*60)
         else:  # pragma: no cover
             logger.info(f"Received {len(sqs_messages)} messages")
+
+
+def commit_ignoring_unique_violations(session):
+    """This function expects a sqlalchemy session which it will try to
+    commit while ignoring errors related to unique constraint violations.
+    Any other errors will be propagated.
+    """
+
+    try:
+        session.commit()
+    except IntegrityError as e:
+        if isinstance(e.orig, UniqueViolation):
+            session.rollback()
+            pass
+        else:
+            raise e
