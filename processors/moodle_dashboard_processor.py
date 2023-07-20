@@ -142,7 +142,7 @@ def process_moodle_users_data(
                 commit_ignoring_unique_violations(session)
 
 
-def process_moodle_grades_data(course_id, grades_data, data_timestamp):
+def process_moodle_grades_data(course_id, grades_data):
     grades_by_date = {}
     for usergrade in grades_data["usergrades"]:
         for gradeitem in usergrade["gradeitems"]:
@@ -223,8 +223,7 @@ def process_s3_notification(s3_client, s3_notification, data_type):
         elif data_type == 'grades':
             process_moodle_grades_data(
                 course_id,
-                json_data,
-                data_timestamp_utc
+                json_data
             )
         else:
             raise ProcessorException(f"Unexpected data type {data_type}")
