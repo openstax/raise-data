@@ -56,7 +56,7 @@ class CourseQuizStat(Base):
     course_id: Mapped[int]
     date: Mapped[date]
     quiz_name: Mapped[str]
-    graded_quizzes: Mapped[int]
+    quiz_attempts: Mapped[int]
 
 
 class ContentLoadedEvent(Base):
