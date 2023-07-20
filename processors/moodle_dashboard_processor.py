@@ -143,31 +143,42 @@ def process_moodle_users_data(
 
 
 def process_moodle_grades_data(course_id, grades_data):
-    grades_by_date = {}
-    for usergrade in grades_data["usergrades"]:
-        for gradeitem in usergrade["gradeitems"]:
-            if gradeitem["gradedatesubmitted"] is not None:
-                quiz_name = gradeitem["itemname"]
+    attempts_by_date = {}
+
+    # This check is here because legacy grades JSON files don't have this data
+    maybe_attempts_data = grades_data.get("attempts")
+    quiz_data = grades_data.get("quizzes")
+    if maybe_attempts_data is None or quiz_data is None:
+        return
+
+    quiz_name_by_id = {}
+    for quiz in quiz_data:
+        quiz_name_by_id[quiz["id"]] = quiz["name"]
+
+    for _, user_data in maybe_attempts_data.items():
+        for _, attempt_data in user_data.items():
+            for attempt in attempt_data["summaries"]:
+                quiz_name = quiz_name_by_id[attempt["quiz"]]
                 date_utc = datetime.fromtimestamp(
-                    gradeitem["gradedatesubmitted"],
+                    attempt["timefinish"],
                     timezone.utc
                 ).date()
-                grades_by_quiz = grades_by_date.setdefault(date_utc, {})
-                grades_by_quiz_count = grades_by_quiz.get(quiz_name, 0)
-                grades_by_quiz[quiz_name] = grades_by_quiz_count + 1
+                attempts_by_quiz = attempts_by_date.setdefault(date_utc, {})
+                attempts_by_quiz_count = attempts_by_quiz.get(quiz_name, 0)
+                attempts_by_quiz[quiz_name] = attempts_by_quiz_count + 1
 
     results = []
 
     # We're going to attempt an "upsert" for every item. If this ends up
     # being a performance issue, we can filter to only recent dates relative
     # to data_timestamp here.
-    for date, grades_by_quiz in grades_by_date.items():
-        for quiz_name, count in grades_by_quiz.items():
+    for date, attempts_by_quiz in attempts_by_date.items():
+        for quiz_name, count in attempts_by_quiz.items():
             results.append({
                 "course_id": course_id,
                 "date": date,
                 "quiz_name": quiz_name,
-                "graded_quizzes": count
+                "quiz_attempts": count
             })
 
     with session_factory.begin() as session:
@@ -176,7 +187,7 @@ def process_moodle_grades_data(course_id, grades_data):
             do_update_stmt = insert_stmt.on_conflict_do_update(
                 index_elements=['course_id', 'date', 'quiz_name'],
                 set_=dict(
-                    graded_quizzes=item["graded_quizzes"],
+                    quiz_attempts=item["quiz_attempts"],
                     updated_at=datetime.utcnow()
                 )
             )
