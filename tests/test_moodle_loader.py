@@ -1,10 +1,10 @@
-from raise_data.loaders import events_loader
+from raise_data.loaders import moodle_loader
 import json
 import boto3
 import botocore.stub
 
 
-def test_load_events_data(mocker):
+def test_load_moodle_data(mocker):
     s3_client = boto3.client("s3")
     sqs_client = boto3.client("sqs", region_name="endor")
     s3_stubber = botocore.stub.Stubber(s3_client)
@@ -13,13 +13,32 @@ def test_load_events_data(mocker):
     list_objects_response = {
         "Contents": [
             {
-                "Key": "topics/1.avro"
+                "Key": "course/term/moodle/type/1.json"
             },
             {
-                "Key": "topics/2.avro"
+                "Key": "course/term/moodle/type/2.json"
             },
             {
-                "Key": "topics/unexpected.json"
+                "Key": "topics/term/moodle/type/unexpected.txt"
+            }
+        ]
+    }
+
+    list_object_versions_1_response = {
+        "Versions": [
+            {
+                'VersionId': 'v1'
+            },
+            {
+                'VersionId': 'v2'
+            }
+        ]
+    }
+
+    list_object_versions_2_response = {
+        "Versions": [
+            {
+                'VersionId': 'v1'
             }
         ]
     }
@@ -27,13 +46,14 @@ def test_load_events_data(mocker):
     file_1_send_request_expect = {
         "Message": json.dumps({
             "Records": [{
-                "eventName": "ObjectCreated:Post",
+                "eventName": "ObjectCreated:Put",
                 "s3": {
                     "bucket": {
                         "name": "testbucket"
                     },
                     "object": {
-                        "key": "topics/1.avro"
+                        "key": "course/term/moodle/type/1.json",
+                        "versionId": "v1"
                     }
                 }
             }]
@@ -43,13 +63,31 @@ def test_load_events_data(mocker):
     file_2_send_request_expect = {
         "Message": json.dumps({
             "Records": [{
-                "eventName": "ObjectCreated:Post",
+                "eventName": "ObjectCreated:Put",
                 "s3": {
                     "bucket": {
                         "name": "testbucket"
                     },
                     "object": {
-                        "key": "topics/2.avro"
+                        "key": "course/term/moodle/type/1.json",
+                        "versionId": "v2"
+                    }
+                }
+            }]
+        })
+    }
+
+    file_3_send_request_expect = {
+        "Message": json.dumps({
+            "Records": [{
+                "eventName": "ObjectCreated:Put",
+                "s3": {
+                    "bucket": {
+                        "name": "testbucket"
+                    },
+                    "object": {
+                        "key": "course/term/moodle/type/2.json",
+                        "versionId": "v1"
                     }
                 }
             }]
@@ -62,6 +100,24 @@ def test_load_events_data(mocker):
         expected_params={
             "Bucket": "testbucket",
             "Prefix": "testprefix",
+        }
+    )
+
+    s3_stubber.add_response(
+        "list_object_versions",
+        list_object_versions_1_response,
+        expected_params={
+            "Bucket": "testbucket",
+            "Prefix": "course/term/moodle/type/1.json",
+        }
+    )
+
+    s3_stubber.add_response(
+        "list_object_versions",
+        list_object_versions_2_response,
+        expected_params={
+            "Bucket": "testbucket",
+            "Prefix": "course/term/moodle/type/2.json",
         }
     )
 
@@ -91,6 +147,15 @@ def test_load_events_data(mocker):
         }
     )
 
+    sqs_stubber.add_response(
+        "send_message",
+        {},
+        expected_params={
+            "QueueUrl": "https://testqueue",
+            "MessageBody": json.dumps(file_3_send_request_expect)
+        }
+    )
+
     s3_stubber.activate()
     sqs_stubber.activate()
     mocker_map = {
@@ -100,7 +165,7 @@ def test_load_events_data(mocker):
     mocker.patch("boto3.client", lambda client: mocker_map[client])
 
     mocker.patch("sys.argv", ["", "testbucket", "testprefix", "testqueue"])
-    events_loader.main()
+    moodle_loader.main()
 
     s3_stubber.assert_no_pending_responses()
     sqs_stubber.assert_no_pending_responses()
