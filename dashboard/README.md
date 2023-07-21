@@ -18,7 +18,7 @@ We use [alembic](https://alembic.sqlalchemy.org/) to manage migrations for the m
 $ alembic revision --autogenerate -m "Message string"
 ```
 
-If you have not alread, create a `raisemetrics` database for testing migrations:
+If you have not already, create a `raisemetrics` database for testing migrations:
 
 ```bash
 $ docker compose exec postgres psql -U pguser postgres -c "CREATE DATABASE raisemetrics"
