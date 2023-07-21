@@ -21,7 +21,7 @@ eventsEnclaveProcessor:
 dashboard:
   domain: metrics.raiselearning.org
   replicas: 2
-  metabaseVersion: v0.46.6
+  metabaseVersion: v0.46.6.1
   pgServer:
   pgUsername:
   pgPassword:
