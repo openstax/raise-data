@@ -72,6 +72,5 @@ def commit_ignoring_unique_violations(session):
     except IntegrityError as e:
         if isinstance(e.orig, UniqueViolation):
             session.rollback()
-            pass
         else:
             raise e
