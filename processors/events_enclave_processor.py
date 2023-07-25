@@ -1,20 +1,14 @@
 import os
-import time
 import argparse
 import boto3
 import json
 import logging
 from fastavro import reader
 from urllib.parse import unquote
+from .common import ProcessorException, processor_runner
 
-SQS_WAIT_TIME_SECS = 20
-SQS_MAX_MESSAGES = 10
 
 logging.basicConfig(level=logging.INFO)
-
-
-class ProcessorException(Exception):
-    pass
 
 
 def get_config():
@@ -42,15 +36,6 @@ def get_json_data(s3_client, bucket, key):
             "data_sources": [],
             "data": []
         }
-
-
-def get_sqs_messages(sqs_client, queue_url):
-    res = sqs_client.receive_message(
-        QueueUrl=queue_url,
-        MaxNumberOfMessages=SQS_MAX_MESSAGES,
-        WaitTimeSeconds=SQS_WAIT_TIME_SECS
-    )
-    return res.get("Messages", [])
 
 
 def process_s3_notification(
@@ -103,6 +88,24 @@ def put_json_data(s3_client, bucket, key, data):
     s3_client.put_object(Body=binary_data, Bucket=bucket, Key=key)
 
 
+def get_sqs_message_processor(
+    s3_client, s3_output_bucket, s3_output_key
+):
+
+    def inner(sqs_message):
+        sns_data = json.loads(sqs_message["Body"])
+        s3_notification = json.loads(sns_data["Message"])
+
+        process_s3_notification(
+            s3_client,
+            s3_notification,
+            s3_output_bucket,
+            s3_output_key
+        )
+
+    return inner
+
+
 def main():
     logging.info("Starting processor...")
     parser = argparse.ArgumentParser(description="")
@@ -118,47 +121,19 @@ def main():
     sqs_client = boto3.client("sqs")
     s3_client = boto3.client("s3")
 
-    queue_url_data = sqs_client.get_queue_url(
-        QueueName=config["consumer_queue"]
+    processor = get_sqs_message_processor(
+        s3_client=s3_client,
+        s3_output_bucket=config["output_bucket"],
+        s3_output_key=config["output_key"]
     )
-    queue_url = queue_url_data["QueueUrl"]
 
-    while True:
-        sqs_messages = get_sqs_messages(sqs_client, queue_url)
-        for message in sqs_messages:
-            receipt_handle = message["ReceiptHandle"]
-
-            sns_data = json.loads(message["Body"])
-            s3_notification = json.loads(sns_data["Message"])
-            try:
-                process_s3_notification(
-                    s3_client,
-                    s3_notification,
-                    config["output_bucket"],
-                    config["output_key"]
-                )
-
-                # Message processed successfully. Delete from SQS.
-                sqs_client.delete_message(
-                    QueueUrl=queue_url,
-                    ReceiptHandle=receipt_handle
-                )
-            except ProcessorException as e:
-                logging.error(f"Failed processing s3 notification: {e}")
-
-        if not daemonize:
-            break
-
-        # Only sleep if the long polling request didn't return any messages.
-        # Otherwise we should keep trying to retrieve messages in order to
-        # drain the queue as SQS may not have returned all available / max
-        # requested. Even an empty response doesn't guarantee the queue
-        # is empty, so this is just a heuristic to balance timely processing
-        # with SQS requests when the polling interval is non-zero.
-        if len(sqs_messages) == 0:  # pragma: no cover
-            time.sleep(config["poll_interval_mins"]*60)
-        else:  # pragma: no cover
-            logging.info(f"Received {len(sqs_messages)} messages")
+    processor_runner(
+        sqs_client=sqs_client,
+        sqs_queue_name=config["consumer_queue"],
+        processor=processor,
+        poll_interval_mins=config["poll_interval_mins"],
+        daemonize=daemonize
+    )
 
 
 if __name__ == "__main__":  # pragma: no cover

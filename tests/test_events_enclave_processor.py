@@ -1,4 +1,4 @@
-from raise_data.processors import events_enclave_processor
+from raise_data.processors import events_enclave_processor, common
 import pytest
 import json
 import io
@@ -345,5 +345,5 @@ def test_process_single_message_bad_event(mocker):
 
 def test_missing_config(mocker):
     mocker.patch("sys.argv", [""])
-    with pytest.raises(events_enclave_processor.ProcessorException):
+    with pytest.raises(common.ProcessorException):
         events_enclave_processor.main()
