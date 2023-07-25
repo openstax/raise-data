@@ -25,6 +25,13 @@ jobs:
         run: pip install .[test]
       - name: Lint
         run: flake8
+      - name: Test setup
+        working-directory: dashboard
+        run: |
+          docker compose up -d postgres
+          docker compose exec -T postgres timeout 10 bash -c "until pg_isready; do sleep 1; done;"
+          docker compose exec -T postgres psql -U pguser postgres -c "CREATE DATABASE raisemetrics"
+          alembic upgrade head
       - name: Test
         run: pytest --cov-report=term --cov-report=xml --cov=raise_data
       - name: Upload Code Coverage
