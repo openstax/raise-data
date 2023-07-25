@@ -10,7 +10,7 @@ When developing code for this repo, developers may want to install the project i
 $ pip install -e .
 ```
 
-The code can be linted and tested locally as well:
+The code can be linted and tested locally as well after setting up the [dashboard Docker environment and database](./dashboard/README.md):
 
 ```bash
 $ pip install .[test]
