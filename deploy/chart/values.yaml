@@ -18,6 +18,19 @@ eventsEnclaveProcessor:
       pollIntervalMins: 1
       jsonOutputS3Bucket: raise-data
       jsonOutputS3Key: "events/ib_input_submitted_v1.json"
+moodleDashboardProcessor:
+  image:
+    name: <account>.dkr.ecr.<region>.amazonaws.com/raise-data
+    tag: sha
+  instances:
+    - name: users
+      sqsQueue: raise-data-moodle-users-dashboard
+      pollIntervalMins: 1
+      dataType: users
+    - name: grades
+      sqsQueue: raise-data-moodle-grades-dashboard
+      pollIntervalMins: 1
+      dataType: grades
 dashboard:
   domain: metrics.raiselearning.org
   replicas: 2
