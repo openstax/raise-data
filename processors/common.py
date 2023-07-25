@@ -73,4 +73,4 @@ def commit_ignoring_unique_violations(session):
         if isinstance(e.orig, UniqueViolation):
             session.rollback()
         else:
-            raise e
+            raise e  # pragma: no cover

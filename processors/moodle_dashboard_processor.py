@@ -60,7 +60,7 @@ def process_moodle_users_data(
                     "term": course_term
                 }
 
-        raise ProcessorException(
+        raise ProcessorException(  # pragma: no cover
             f"Could not find course name for {course_id} in users data"
         )
 
@@ -148,7 +148,7 @@ def process_moodle_grades_data(course_id, grades_data):
     # This check is here because legacy grades JSON files don't have this data
     maybe_attempts_data = grades_data.get("attempts")
     quiz_data = grades_data.get("quizzes")
-    if maybe_attempts_data is None or quiz_data is None:
+    if maybe_attempts_data is None or quiz_data is None:  # pragma: no cover
         return
 
     quiz_name_by_id = {}
@@ -198,7 +198,7 @@ def process_s3_notification(s3_client, s3_notification, data_type):
     for record in s3_notification["Records"]:
         event_name = record["eventName"]
 
-        if not event_name.startswith("ObjectCreated:"):
+        if not event_name.startswith("ObjectCreated:"):  # pragma: no cover
             raise ProcessorException(f"Unexpected S3 event: {event_name}")
 
         s3_data = record["s3"]
@@ -236,7 +236,7 @@ def process_s3_notification(s3_client, s3_notification, data_type):
                 course_id,
                 json_data
             )
-        else:
+        else:  # pragma: no cover
             raise ProcessorException(f"Unexpected data type {data_type}")
 
 

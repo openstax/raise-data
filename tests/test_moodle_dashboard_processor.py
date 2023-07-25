@@ -1,4 +1,4 @@
-from raise_data.processors import moodle_dashboard_processor
+from raise_data.processors import moodle_dashboard_processor, common
 import boto3
 import pytest
 import botocore.stub
@@ -428,3 +428,9 @@ def test_process_grades_data(mocker):
 
     s3_stubber.assert_no_pending_responses()
     sqs_stubber.assert_no_pending_responses()
+
+
+def test_missing_config(mocker):
+    mocker.patch("sys.argv", [""])
+    with pytest.raises(common.ProcessorException):
+        moodle_dashboard_processor.main()
