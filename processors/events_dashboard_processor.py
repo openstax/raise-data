@@ -4,7 +4,6 @@ import boto3
 import json
 import logging
 from fastavro import reader
-from urllib.parse import unquote
 from datetime import datetime, timezone
 from urllib.parse import unquote
 import hashlib
@@ -62,7 +61,9 @@ def timestamp_utc_conversion(millisecond_timestamp):
 
 def process_events(event_data, event_type):
     event_timestamp_utc = timestamp_utc_conversion(event_data["timestamp"])
-    user_uuid_md5 = hashlib.md5(event_data["user_uuid"].encode("utf-8")).hexdigest()
+    user_uuid_md5 = hashlib.md5(
+        event_data["user_uuid"].encode("utf-8")
+        ).hexdigest()
     modified_event_data = {
         "user_uuid_md5": user_uuid_md5,
         "course_id": event_data["course_id"],
@@ -73,9 +74,13 @@ def process_events(event_data, event_type):
     }
 
     if event_type == "input_submitted_event":
-        modified_event_data["input_content_id"] = event_data["input_content_id"]
+        modified_event_data["input_content_id"] = event_data[
+            "input_content_id"
+        ]
     elif event_type == "pset_problem_attempted_event":
-        modified_event_data["pset_content_id"] = event_data["pset_content_id"]
+        modified_event_data["pset_content_id"] = event_data[
+            "pset_content_id"
+        ]
         modified_event_data["pset_problem_content_id"] = event_data[
             "pset_problem_content_id"
         ]
@@ -145,7 +150,11 @@ def get_sqs_message_processor(s3_client, event_type):
 def main():
     logging.info("Starting processor...")
     parser = argparse.ArgumentParser(description="")
-    parser.add_argument("--daemonize", action="store_true", help="Deamonize processor")
+    parser.add_argument(
+        "--daemonize",
+        action="store_true",
+        help="Deamonize processor"
+    )
     args = parser.parse_args()
     daemonize = args.daemonize
     config = get_config()

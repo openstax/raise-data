@@ -103,7 +103,10 @@ def test_process_content_loaded_event_data(mocker):
         "receive_message",
         {
             "Messages": [
-                {"ReceiptHandle": "message1", "Body": json.dumps(mock_sns_data)}
+                {
+                    "ReceiptHandle": "message1",
+                    "Body": json.dumps(mock_sns_data)
+                }
             ]
         },
         expected_params={
@@ -115,7 +118,10 @@ def test_process_content_loaded_event_data(mocker):
     sqs_stubber.add_response(
         "delete_message",
         {},
-        expected_params={"QueueUrl": "https://testqueue", "ReceiptHandle": "message1"},
+        expected_params={
+            "QueueUrl": "https://testqueue",
+            "ReceiptHandle": "message1"
+        },
     )
     s3_stubber.add_response(
         "get_object",
@@ -148,13 +154,15 @@ def test_process_content_loaded_event_data(mocker):
         content_loaded_event = session.query(ContentLoadedEvent).all()
 
         assert (
-            content_loaded_event[0].user_uuid_md5 == "380745a431c61d0b5747dd351fce7b2d"
+            content_loaded_event[0].user_uuid_md5 ==
+            "380745a431c61d0b5747dd351fce7b2d"
         )
         assert content_loaded_event[0].course_id == 1
+        # without the string conversion the return value is UUID('string here')
         assert (
             str(
                 content_loaded_event[0].impression_id
-            )  # without the string conversion the return value is UUID('string here')
+            )
             == "0ee17feb-1883-4889-9cd9-81ee541d28a9"
         )
         assert content_loaded_event[0].timestamp == first_data_timestamp_utc
@@ -164,7 +172,8 @@ def test_process_content_loaded_event_data(mocker):
         )
         assert content_loaded_event[0].variant == "main"
         assert (
-            content_loaded_event[1].user_uuid_md5 == "a6f9ae229ed5ac799b8cf34065046b36"
+            content_loaded_event[1].user_uuid_md5 ==
+            "a6f9ae229ed5ac799b8cf34065046b36"
         )
         assert content_loaded_event[1].course_id == 2
         assert (
@@ -266,7 +275,10 @@ def test_process_input_submitted_event_data(mocker):
         "receive_message",
         {
             "Messages": [
-                {"ReceiptHandle": "message1", "Body": json.dumps(mock_sns_data)}
+                {
+                    "ReceiptHandle": "message1",
+                    "Body": json.dumps(mock_sns_data)
+                }
             ]
         },
         expected_params={
@@ -278,7 +290,10 @@ def test_process_input_submitted_event_data(mocker):
     sqs_stubber.add_response(
         "delete_message",
         {},
-        expected_params={"QueueUrl": "https://testqueue", "ReceiptHandle": "message1"},
+        expected_params={
+            "QueueUrl": "https://testqueue",
+            "ReceiptHandle": "message1"
+        },
     )
     s3_stubber.add_response(
         "get_object",
@@ -311,13 +326,15 @@ def test_process_input_submitted_event_data(mocker):
         input_submitted_event = session.query(InputSubmittedEvent).all()
 
         assert (
-            input_submitted_event[0].user_uuid_md5 == "380745a431c61d0b5747dd351fce7b2d"
+            input_submitted_event[0].user_uuid_md5 ==
+            "380745a431c61d0b5747dd351fce7b2d"
         )
         assert input_submitted_event[0].course_id == 1
+        # without the string conversion the return value is UUID('string here')
         assert (
             str(
                 input_submitted_event[0].impression_id
-            )  # without the string conversion the return value is UUID('string here')
+            )
             == "0ee17feb-1883-4889-9cd9-81ee541d28a9"
         )
         assert input_submitted_event[0].timestamp == first_data_timestamp_utc
@@ -331,7 +348,8 @@ def test_process_input_submitted_event_data(mocker):
         )
         assert input_submitted_event[0].variant == "main"
         assert (
-            input_submitted_event[1].user_uuid_md5 == "a6f9ae229ed5ac799b8cf34065046b36"
+            input_submitted_event[1].user_uuid_md5 ==
+            "a6f9ae229ed5ac799b8cf34065046b36"
         )
         assert input_submitted_event[1].course_id == 2
         assert (
@@ -452,7 +470,10 @@ def test_process_pset_problem_attempted_event_data(mocker):
         "receive_message",
         {
             "Messages": [
-                {"ReceiptHandle": "message1", "Body": json.dumps(mock_sns_data)}
+                {
+                    "ReceiptHandle": "message1",
+                    "Body": json.dumps(mock_sns_data)
+                }
             ]
         },
         expected_params={
@@ -464,7 +485,10 @@ def test_process_pset_problem_attempted_event_data(mocker):
     sqs_stubber.add_response(
         "delete_message",
         {},
-        expected_params={"QueueUrl": "https://testqueue", "ReceiptHandle": "message1"},
+        expected_params={
+            "QueueUrl": "https://testqueue",
+            "ReceiptHandle": "message1"
+        },
     )
     s3_stubber.add_response(
         "get_object",
@@ -494,29 +518,33 @@ def test_process_pset_problem_attempted_event_data(mocker):
     events_dashboard_processor.main()
 
     with events_dashboard_processor.session_factory.begin() as session:
-        pset_problem_attempted_event = session.query(PsetProblemAttemptedEvent).all()
+        pset_problem_attempted_event = session.query(
+            PsetProblemAttemptedEvent
+            ).all()
 
         assert (
             pset_problem_attempted_event[0].user_uuid_md5
             == "060a293298d8809a908bd3daf34ba712"
         )
         assert pset_problem_attempted_event[0].course_id == 1
+        # without the string conversion the return value is UUID('string here')
         assert (
             str(
                 pset_problem_attempted_event[0].impression_id
-            )  # without the string conversion the return value is UUID('string here')
+            )
             == "e666aa69-3ccf-420b-a53e-cbccc829f04d"
         )
-        assert pset_problem_attempted_event[0].timestamp == first_data_timestamp_utc
+        assert pset_problem_attempted_event[0].timestamp == \
+            first_data_timestamp_utc
         assert (
             str(pset_problem_attempted_event[0].content_id)
             == "28363137-5337-40dd-a70d-ab54b6771119"
         )
         assert pset_problem_attempted_event[0].variant == "main"
         assert pset_problem_attempted_event[0].problem_type == "dropdown"
-        assert pset_problem_attempted_event[0].correct == False
+        assert pset_problem_attempted_event[0].correct is False
         assert pset_problem_attempted_event[0].attempt == 1
-        assert pset_problem_attempted_event[0].final_attempt == False
+        assert pset_problem_attempted_event[0].final_attempt is False
         assert (
             str(pset_problem_attempted_event[0].pset_content_id)
             == "e3ab7105-f1dd-4e70-9a89-01793081038b"
@@ -534,16 +562,17 @@ def test_process_pset_problem_attempted_event_data(mocker):
             str(pset_problem_attempted_event[1].impression_id)
             == "cca39565-231f-444a-b08a-2423b8411478"
         )
-        assert pset_problem_attempted_event[1].timestamp == second_data_timestamp_utc
+        assert pset_problem_attempted_event[1].timestamp == \
+            second_data_timestamp_utc
         assert (
             str(pset_problem_attempted_event[1].content_id)
             == "c64e158e-7168-4438-bd16-565adeeb87fd"
         )
         assert pset_problem_attempted_event[1].variant == "main"
         assert pset_problem_attempted_event[1].problem_type == "dropdown"
-        assert pset_problem_attempted_event[1].correct == True
+        assert pset_problem_attempted_event[1].correct is True
         assert pset_problem_attempted_event[1].attempt == 2
-        assert pset_problem_attempted_event[1].final_attempt == True
+        assert pset_problem_attempted_event[1].final_attempt is True
         assert (
             str(pset_problem_attempted_event[1].pset_content_id)
             == "d3ab7105-f1dd-4e70-9a89-01793081038b"
