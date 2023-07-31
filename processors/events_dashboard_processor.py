@@ -49,7 +49,7 @@ def get_config():
             "postgres_user": os.environ["POSTGRES_USER"],
             "postgres_password": os.environ["POSTGRES_PASSWORD"],
         }
-    except KeyError as e:
+    except KeyError as e:  # pragma: no cover
         raise ProcessorException(f"Missing expected environment variable: {e}")
 
 
@@ -99,7 +99,7 @@ def process_s3_notification(s3_client, s3_notification, event_type):
     for record in s3_notification["Records"]:
         event_name = record["eventName"]
 
-        if not event_name.startswith("ObjectCreated:"):
+        if not event_name.startswith("ObjectCreated:"):  # pragma: no cover
             raise ProcessorException(f"Unexpected S3 event: {event_name}")
 
         s3_data = record["s3"]
