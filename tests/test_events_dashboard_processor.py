@@ -117,14 +117,6 @@ def test_process_content_loaded_event_data(mocker):
         {},
         expected_params={"QueueUrl": "https://testqueue", "ReceiptHandle": "message1"},
     )
-    s3_stubber.add_client_error(
-        "get_object",
-        service_error_code="NoSuchKey",
-        expected_params={
-            "Bucket": "testeventbucket",
-            "Key": "testeventkey",
-        },
-    )
     s3_stubber.add_response(
         "get_object",
         {"Body": mock_avro_bytes},
@@ -287,14 +279,6 @@ def test_process_input_submitted_event_data(mocker):
         "delete_message",
         {},
         expected_params={"QueueUrl": "https://testqueue", "ReceiptHandle": "message1"},
-    )
-    s3_stubber.add_client_error(
-        "get_object",
-        service_error_code="NoSuchKey",
-        expected_params={
-            "Bucket": "testeventbucket",
-            "Key": "testeventkey",
-        },
     )
     s3_stubber.add_response(
         "get_object",
@@ -481,14 +465,6 @@ def test_process_pset_problem_attempted_event_data(mocker):
         "delete_message",
         {},
         expected_params={"QueueUrl": "https://testqueue", "ReceiptHandle": "message1"},
-    )
-    s3_stubber.add_client_error(
-        "get_object",
-        service_error_code="NoSuchKey",
-        expected_params={
-            "Bucket": "testeventbucket",
-            "Key": "testeventkey",
-        },
     )
     s3_stubber.add_response(
         "get_object",
