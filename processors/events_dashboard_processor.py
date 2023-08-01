@@ -53,8 +53,7 @@ def get_config():
 
 
 def timestamp_utc_conversion(millisecond_timestamp):
-    # Remove decimal from timestamp_seconds via int()
-    timestamp_seconds = int(millisecond_timestamp / 1000)
+    timestamp_seconds = millisecond_timestamp / 1000
     timestamp_utc = datetime.fromtimestamp(timestamp_seconds, timezone.utc)
     return timestamp_utc
 
@@ -113,25 +112,15 @@ def process_s3_notification(s3_client, s3_notification, event_type):
 
         event_data = s3_client.get_object(Bucket=bucket, Key=key)
 
-        types_of_events = {
-            "content_loaded_event": "content_loaded_event",
-            "input_submitted_event": "input_submitted_event",
-            "pset_problem_attempted_event": "pset_problem_attempted_event",
-        }
+        expected_events = set([
+            "content_loaded_event",
+            "input_submitted_event",
+            "pset_problem_attempted_event",
+        ])
 
         avro_reader = reader(event_data["Body"])
         for event in avro_reader:
-            for field in [
-                "source_scheme",
-                "source_host",
-                "source_path",
-                "source_query",
-            ]:
-                del event[field]
-            if event_type != "content_loaded_event":
-                del event["response"]
-
-            if types_of_events[event_type]:
+            if event_type in expected_events:
                 process_events(event, event_type)
             else:  # pragma: no cover
                 raise ProcessorException(f"Unexpected event type {event_type}")
