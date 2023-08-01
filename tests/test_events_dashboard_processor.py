@@ -91,47 +91,47 @@ def test_process_content_loaded_event_data(mocker):
         },
     ]
     for _ in range(2):
-      mock_avro_bytes = io.BytesIO()
-      writer(mock_avro_bytes, parsed_schema, mock_avro_data, codec="snappy")
-      mock_avro_bytes.seek(0)
+        mock_avro_bytes = io.BytesIO()
+        writer(mock_avro_bytes, parsed_schema, mock_avro_data, codec="snappy")
+        mock_avro_bytes.seek(0)
 
-      sqs_stubber.add_response(
-          "get_queue_url",
-          {"QueueUrl": "https://testqueue"},
-          expected_params={"QueueName": "testqueue"},
-      )
-      sqs_stubber.add_response(
-          "receive_message",
-          {
-              "Messages": [
-                  {
-                      "ReceiptHandle": "message1",
-                      "Body": json.dumps(mock_sns_data)
-                  }
-              ]
-          },
-          expected_params={
-              "QueueUrl": "https://testqueue",
-              "MaxNumberOfMessages": 10,
-              "WaitTimeSeconds": 20,
-          },
-      )
-      sqs_stubber.add_response(
-          "delete_message",
-          {},
-          expected_params={
-              "QueueUrl": "https://testqueue",
-              "ReceiptHandle": "message1"
-          },
-      )
-      s3_stubber.add_response(
-          "get_object",
-          {"Body": mock_avro_bytes},
-          expected_params={
-              "Bucket": "testeventbucket",
-              "Key": "testeventkey",
-          },
-      )
+        sqs_stubber.add_response(
+            "get_queue_url",
+            {"QueueUrl": "https://testqueue"},
+            expected_params={"QueueName": "testqueue"},
+        )
+        sqs_stubber.add_response(
+            "receive_message",
+            {
+                "Messages": [
+                    {
+                        "ReceiptHandle": "message1",
+                        "Body": json.dumps(mock_sns_data)
+                    }
+                ]
+            },
+            expected_params={
+                "QueueUrl": "https://testqueue",
+                "MaxNumberOfMessages": 10,
+                "WaitTimeSeconds": 20,
+            },
+        )
+        sqs_stubber.add_response(
+            "delete_message",
+            {},
+            expected_params={
+                "QueueUrl": "https://testqueue",
+                "ReceiptHandle": "message1"
+            },
+        )
+        s3_stubber.add_response(
+            "get_object",
+            {"Body": mock_avro_bytes},
+            expected_params={
+                "Bucket": "testeventbucket",
+                "Key": "testeventkey",
+            },
+        )
 
     s3_stubber.activate()
     sqs_stubber.activate()
@@ -273,47 +273,47 @@ def test_process_input_submitted_event_data(mocker):
         },
     ]
     for _ in range(2):
-      mock_avro_bytes = io.BytesIO()
-      writer(mock_avro_bytes, parsed_schema, mock_avro_data, codec="snappy")
-      mock_avro_bytes.seek(0)
+        mock_avro_bytes = io.BytesIO()
+        writer(mock_avro_bytes, parsed_schema, mock_avro_data, codec="snappy")
+        mock_avro_bytes.seek(0)
 
-      sqs_stubber.add_response(
-          "get_queue_url",
-          {"QueueUrl": "https://testqueue"},
-          expected_params={"QueueName": "testqueue"},
-      )
-      sqs_stubber.add_response(
-          "receive_message",
-          {
-              "Messages": [
-                  {
-                      "ReceiptHandle": "message1",
-                      "Body": json.dumps(mock_sns_data)
-                  }
-              ]
-          },
-          expected_params={
-              "QueueUrl": "https://testqueue",
-              "MaxNumberOfMessages": 10,
-              "WaitTimeSeconds": 20,
-          },
-      )
-      sqs_stubber.add_response(
-          "delete_message",
-          {},
-          expected_params={
-              "QueueUrl": "https://testqueue",
-              "ReceiptHandle": "message1"
-          },
-      )
-      s3_stubber.add_response(
-          "get_object",
-          {"Body": mock_avro_bytes},
-          expected_params={
-              "Bucket": "testeventbucket",
-              "Key": "testeventkey",
-          },
-      )
+        sqs_stubber.add_response(
+            "get_queue_url",
+            {"QueueUrl": "https://testqueue"},
+            expected_params={"QueueName": "testqueue"},
+        )
+        sqs_stubber.add_response(
+            "receive_message",
+            {
+                "Messages": [
+                    {
+                        "ReceiptHandle": "message1",
+                        "Body": json.dumps(mock_sns_data)
+                    }
+                ]
+            },
+            expected_params={
+                "QueueUrl": "https://testqueue",
+                "MaxNumberOfMessages": 10,
+                "WaitTimeSeconds": 20,
+            },
+        )
+        sqs_stubber.add_response(
+            "delete_message",
+            {},
+            expected_params={
+                "QueueUrl": "https://testqueue",
+                "ReceiptHandle": "message1"
+            },
+        )
+        s3_stubber.add_response(
+            "get_object",
+            {"Body": mock_avro_bytes},
+            expected_params={
+                "Bucket": "testeventbucket",
+                "Key": "testeventkey",
+            },
+        )
 
     s3_stubber.activate()
     sqs_stubber.activate()
@@ -478,47 +478,47 @@ def test_process_pset_problem_attempted_event_data(mocker):
         },
     ]
     for _ in range(2):
-      mock_avro_bytes = io.BytesIO()
-      writer(mock_avro_bytes, parsed_schema, mock_avro_data, codec="snappy")
-      mock_avro_bytes.seek(0)
+        mock_avro_bytes = io.BytesIO()
+        writer(mock_avro_bytes, parsed_schema, mock_avro_data, codec="snappy")
+        mock_avro_bytes.seek(0)
 
-      sqs_stubber.add_response(
-          "get_queue_url",
-          {"QueueUrl": "https://testqueue"},
-          expected_params={"QueueName": "testqueue"},
-      )
-      sqs_stubber.add_response(
-          "receive_message",
-          {
-              "Messages": [
-                  {
-                      "ReceiptHandle": "message1",
-                      "Body": json.dumps(mock_sns_data)
-                  }
-              ]
-          },
-          expected_params={
-              "QueueUrl": "https://testqueue",
-              "MaxNumberOfMessages": 10,
-              "WaitTimeSeconds": 20,
-          },
-      )
-      sqs_stubber.add_response(
-          "delete_message",
-          {},
-          expected_params={
-              "QueueUrl": "https://testqueue",
-              "ReceiptHandle": "message1"
-          },
-      )
-      s3_stubber.add_response(
-          "get_object",
-          {"Body": mock_avro_bytes},
-          expected_params={
-              "Bucket": "testeventbucket",
-              "Key": "testeventkey",
-          },
-      )
+        sqs_stubber.add_response(
+            "get_queue_url",
+            {"QueueUrl": "https://testqueue"},
+            expected_params={"QueueName": "testqueue"},
+        )
+        sqs_stubber.add_response(
+            "receive_message",
+            {
+                "Messages": [
+                    {
+                        "ReceiptHandle": "message1",
+                        "Body": json.dumps(mock_sns_data)
+                    }
+                ]
+            },
+            expected_params={
+                "QueueUrl": "https://testqueue",
+                "MaxNumberOfMessages": 10,
+                "WaitTimeSeconds": 20,
+            },
+        )
+        sqs_stubber.add_response(
+            "delete_message",
+            {},
+            expected_params={
+                "QueueUrl": "https://testqueue",
+                "ReceiptHandle": "message1"
+            },
+        )
+        s3_stubber.add_response(
+            "get_object",
+            {"Body": mock_avro_bytes},
+            expected_params={
+                "Bucket": "testeventbucket",
+                "Key": "testeventkey",
+            },
+        )
 
     s3_stubber.activate()
     sqs_stubber.activate()
@@ -608,7 +608,9 @@ def test_process_pset_problem_attempted_event_data(mocker):
     events_dashboard_processor.main()
 
     with events_dashboard_processor.session_factory.begin() as session:
-        pset_problem_attempted_event = session.query(PsetProblemAttemptedEvent).all()
+        pset_problem_attempted_event = session.query(
+            PsetProblemAttemptedEvent
+            ).all()
 
         assert len(pset_problem_attempted_event) == 2
 
