@@ -17,7 +17,7 @@ phases:
       - echo $IMAGE_TAG > data-image-tag.txt
   build:
     commands:
-      - docker build . -t $IMAGE_NAME:$IMAGE_TAG
+      - docker build . -t $IMAGE_NAME:$IMAGE_TAG -t $IMAGE_NAME:latest
     on-failure: ABORT
     finally:
       - "if [[ $CODEBUILD_BUILD_SUCCEEDING != 1 ]]; then curl -X POST -H 'Content-type: application/json' --data '{\"text\":\"Error in raise-data pipeline!\"}' $SLACK_WEBHOOKURL; fi"
@@ -25,6 +25,7 @@ phases:
     commands:
       - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
       - docker push $IMAGE_NAME:$IMAGE_TAG
+      - docker push $IMAGE_NAME:latest
 artifacts:
   files:
     - data-image-name.txt
