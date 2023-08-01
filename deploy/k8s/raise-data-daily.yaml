@@ -1,0 +1,57 @@
+apiVersion: argoproj.io/v1alpha1
+kind: CronWorkflow
+metadata:
+  generateName: raise-data-daily-
+  namespace: raise
+spec:
+  schedule: "0 21 * * *"
+  concurrencyPolicy: "Replace"
+  timezone: America/Chicago
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  workflowSpec:
+    entrypoint: flow
+    templates:
+    - name: push-users
+      serviceAccountName: raise-data
+      container:
+        image: 361171574891.dkr.ecr.us-east-1.amazonaws.com/raise-data:latest
+        command:
+          - "bash"
+          - "-cxe"
+          - |
+            aws s3 cp s3://raise-data/algebra1/ay2023/automation/courses.csv courses.csv
+            moodle-cli export-bulk courses.csv raise-data algebra1/ay2023/moodle/users users
+        env:
+          - name: MOODLE_URL
+            value: https://raiselearning.org
+          - name: MOODLE_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: raise-data-moodle-creds
+                key: token
+    - name: push-grades
+      serviceAccountName: raise-data
+      container:
+        image: 361171574891.dkr.ecr.us-east-1.amazonaws.com/raise-data:latest
+        command:
+          - "bash"
+          - "-cxe"
+          - |
+            aws s3 cp s3://raise-data/algebra1/ay2023/automation/courses.csv courses.csv
+            moodle-cli export-bulk courses.csv raise-data algebra1/ay2023/moodle/grades grades
+        env:
+          - name: MOODLE_URL
+            value: https://raiselearning.org
+          - name: MOODLE_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: raise-data-moodle-creds
+                key: token
+    - name: flow
+      dag:
+        tasks:
+        - name: push-users
+          template: push-users
+        - name: push-grades
+          template: push-grades
