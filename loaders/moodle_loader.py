@@ -41,11 +41,17 @@ def main():
         type=str,
         help='Target SQS queue'
     )
+    parser.add_argument(
+        '--latest-only',
+        action='store_true',
+        help="Only consider latest object versions"
+    )
 
     args = parser.parse_args()
     s3_bucket = args.s3_bucket
     s3_prefix = args.s3_prefix
     sqs_queue = args.sqs_queue
+    latest_only = args.latest_only
 
     s3_client = boto3.client('s3')
     sqs_client = boto3.client("sqs")
@@ -71,6 +77,9 @@ def main():
                     Prefix=object_key
                 )
                 for version in object_versions["Versions"]:
+                    if latest_only and not version['IsLatest']:
+                        continue
+
                     sns_event = create_synthetic_sns_event(
                         s3_bucket,
                         object_key,
