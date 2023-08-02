@@ -1,0 +1,49 @@
+{{- range .Values.eventsDashboardProcessor.instances }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $.Chart.Name }}-events-dashboard-proc-{{ .name }}
+  labels:
+    app: {{ $.Chart.Name }}-events-dashboard-proc-{{ .name }}
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: {{ $.Chart.Name }}-events-dashboard-proc-{{ .name }}
+  template:
+    metadata:
+      labels:
+        app: {{ $.Chart.Name }}-events-dashboard-proc-{{ .name }}
+    spec:
+      serviceAccountName: raise-data
+      containers:
+        - name: {{ $.Chart.Name }}-events-dashboard-proc-{{ .name }}
+          image: {{ $.Values.eventsDashboardProcessor.image.name }}:{{ $.Values.eventsDashboardProcessor.image.tag }}
+          imagePullPolicy: Always
+          command: ["events-dashboard-processor"]
+          args: ["--daemonize"]
+          env:
+            - name: SQS_QUEUE
+              value: {{ .sqsQueue }}
+            - name: POLL_INTERVAL_MINS
+              value: "{{ .pollIntervalMins }}"
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Chart.Name }}-dashboard
+                  key: pgUsername
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Chart.Name }}-dashboard
+                  key: pgPassword
+            - name: POSTGRES_SERVER
+              value: {{ $.Values.dashboard.pgServer }}
+            - name: POSTGRES_DB
+              value: raisemetrics
+            - name: EVENT_TYPE
+              value: {{ .eventType }}
+{{- end }}

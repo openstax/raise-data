@@ -18,6 +18,23 @@ eventsEnclaveProcessor:
       pollIntervalMins: 1
       jsonOutputS3Bucket: raise-data
       jsonOutputS3Key: "events/ib_input_submitted_v1.json"
+eventsDashboardProcessor:
+  image:
+    name: <account>.dkr.ecr.<region>.amazonaws.com/raise-data
+    tag: sha
+  instances:
+    - name: content-loaded-v1
+      sqsQueue: raise-data-events-content_loaded_v1-dashboard
+      pollIntervalMins: 1
+      eventType: content_loaded_event
+    - name: ib-input-submitted-v1
+      sqsQueue: raise-data-events-ib_input_submitted_v1-dashboard
+      pollIntervalMins: 1
+      eventType: input_submitted_event
+    - name: ib-pset-problem-attempted-v1
+      sqsQueue: raise-data-events-ib_pset_problem_attempted_v1-dashboard
+      pollIntervalMins: 1
+      eventType: pset_problem_attempted_event
 moodleDashboardProcessor:
   image:
     name: <account>.dkr.ecr.<region>.amazonaws.com/raise-data
