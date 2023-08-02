@@ -25,6 +25,8 @@ phases:
       - yq e -i '.eventsEnclaveProcessor.image.tag=strenv(DATA_IMAGE_TAG)' ./values.yaml
       - yq e -i '.moodleDashboardProcessor.image.name=strenv(DATA_IMAGE_NAME)' ./values.yaml
       - yq e -i '.moodleDashboardProcessor.image.tag=strenv(DATA_IMAGE_TAG)' ./values.yaml
+      - yq e -i '.eventsDashboardProcessor.image.name=strenv(DATA_IMAGE_NAME)' ./values.yaml
+      - yq e -i '.eventsDashboardProcessor.image.tag=strenv(DATA_IMAGE_TAG)' ./values.yaml
       - yq e -i '.dashboard.pgUsername=strenv(DASHBOARD_POSTGRES_USER)' ./values.yaml
       - yq e -i '.dashboard.pgPassword=strenv(DASHBOARD_POSTGRES_PASSWORD)' ./values.yaml
       - yq e -i '.dashboard.pgServer=strenv(DASHBOARD_POSTGRES_SERVER)' ./values.yaml
