@@ -70,8 +70,8 @@ class CourseContent(Base):
     term: Mapped[str]
     section: Mapped[str]
     activity_name: Mapped[str]
-    lesson_name: Mapped[str]
-    visible: Mapped[bool]
+    lesson_page: Mapped[str]
+    # visible: Mapped[bool]
 
 
 class ContentLoadedEvent(Base):
