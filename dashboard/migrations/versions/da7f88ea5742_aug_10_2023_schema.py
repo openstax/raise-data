@@ -1,8 +1,8 @@
-"""Test without visible column
+"""Aug 10 2023 schema
 
-Revision ID: 43ad9fc768a4
+Revision ID: da7f88ea5742
 Revises: 8748834e91a6
-Create Date: 2023-08-09 15:04:50.698916
+Create Date: 2023-08-10 16:40:42.372144
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '43ad9fc768a4'
+revision = 'da7f88ea5742'
 down_revision = '8748834e91a6'
 branch_labels = None
 depends_on = None
@@ -25,6 +25,7 @@ def upgrade() -> None:
     sa.Column('section', sa.String(), nullable=False),
     sa.Column('activity_name', sa.String(), nullable=False),
     sa.Column('lesson_page', sa.String(), nullable=False),
+    sa.Column('visible', sa.Boolean(), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=False),
     sa.Column('updated_at', sa.DateTime(), nullable=False),
     sa.PrimaryKeyConstraint('id'),

@@ -71,7 +71,7 @@ class CourseContent(Base):
     section: Mapped[str]
     activity_name: Mapped[str]
     lesson_page: Mapped[str]
-    # visible: Mapped[bool]
+    visible: Mapped[bool]
 
 
 class ContentLoadedEvent(Base):
