@@ -59,6 +59,21 @@ class CourseQuizStat(Base):
     quiz_attempts: Mapped[int]
 
 
+class CourseContent(Base):
+    __tablename__ = 'course_content'
+    __table_args__ = (
+        UniqueConstraint('content_id', 'term'),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    content_id: Mapped[UUID]
+    term: Mapped[str]
+    section: Mapped[str]
+    activity_name: Mapped[str]
+    lesson_page: Mapped[str]
+    visible: Mapped[bool]
+
+
 class ContentLoadedEvent(Base):
     __tablename__ = 'content_loaded_event'
     __table_args__ = (
