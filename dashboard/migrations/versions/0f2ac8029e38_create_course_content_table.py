@@ -1,8 +1,8 @@
-"""Aug 10 2023 schema
+"""Create course_content table
 
-Revision ID: da7f88ea5742
+Revision ID: 0f2ac8029e38
 Revises: 8748834e91a6
-Create Date: 2023-08-10 16:40:42.372144
+Create Date: 2023-08-14 10:04:48.280245
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'da7f88ea5742'
+revision = '0f2ac8029e38'
 down_revision = '8748834e91a6'
 branch_labels = None
 depends_on = None
