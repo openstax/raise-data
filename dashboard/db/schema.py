@@ -18,6 +18,7 @@ class Course(Base):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=False)
     name: Mapped[str]
     term: Mapped[str]
+    district: Mapped[str]
 
 
 class EventUserEnrollment(Base):
