@@ -4,7 +4,7 @@ import csv
 import os
 from io import StringIO
 from datetime import datetime
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, update, select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import sessionmaker
 from raise_data.dashboard.schema import (
@@ -42,34 +42,28 @@ def main():
 
 
     s3_client = boto3.client('s3')
-    course_content_stream = s3_client.get_object(
+    course_metadata_stream = s3_client.get_object(
         Bucket=s3_bucket,
         Key=s3_prefix)
-    course_content_data = StringIO(
-        course_content_stream['Body'].read().decode('utf-8')
+    course_metadata = StringIO(
+        course_metadata_stream['Body'].read().decode('utf-8')
         )
-    records = csv.DictReader(course_content_data)
+    records = csv.DictReader(course_metadata)
 
-    for eachRecord in records:
-        print(eachRecord)
 
-    # with session_factory.begin() as session:
-    #     for eachRecord in records:
-    #         visible = True if eachRecord['visible'] == '1' else False
-    #         eachRecord['visible'] = visible
-    #         eachRecord['term'] = term
-    #         insert_stmt = insert(CourseContent).values(**eachRecord)
-    #         do_update_stmt = insert_stmt.on_conflict_do_update(
-    #             index_elements=['term', 'content_id'],
-    #             set_=dict(
-    #                 section=eachRecord['section'],
-    #                 activity_name=eachRecord['activity_name'],
-    #                 lesson_page=eachRecord['lesson_page'],
-    #                 visible=visible,
-    #                 updated_at=datetime.utcnow()
-    #             )
-    #         )
-    #         session.execute(do_update_stmt)
+    with session_factory.begin() as session:
+        existing_courses = session.query(Course).all()
+
+        for eachRecord in records:
+            for course in existing_courses:
+                if int(eachRecord['course_id']) == course.id:
+                    if eachRecord['district'] != course.district:
+                        update_stmt = (
+                            update(Course)
+                            .where(Course.id == int(eachRecord['course_id']))
+                            .values(district=eachRecord['district'], updated_at=datetime.utcnow())
+                        )
+                        session.execute(update_stmt)
 
 
 if __name__ == "__main__":  # pragma: no cover
