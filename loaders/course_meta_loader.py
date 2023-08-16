@@ -4,8 +4,7 @@ import csv
 import os
 from io import StringIO
 from datetime import datetime
-from sqlalchemy import create_engine, update, select
-from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy import create_engine, update
 from sqlalchemy.orm import sessionmaker
 from raise_data.dashboard.schema import (
      Course
@@ -40,7 +39,6 @@ def main():
     s3_bucket = args.s3_bucket
     s3_prefix = args.s3_prefix
 
-
     s3_client = boto3.client('s3')
     course_metadata_stream = s3_client.get_object(
         Bucket=s3_bucket,
@@ -49,7 +47,6 @@ def main():
         course_metadata_stream['Body'].read().decode('utf-8')
         )
     records = csv.DictReader(course_metadata)
-
 
     with session_factory.begin() as session:
         existing_courses = session.query(Course).all()
@@ -61,7 +58,10 @@ def main():
                         update_stmt = (
                             update(Course)
                             .where(Course.id == int(eachRecord['course_id']))
-                            .values(district=eachRecord['district'], updated_at=datetime.utcnow())
+                            .values(
+                                district=eachRecord['district'],
+                                updated_at=datetime.utcnow()
+                            )
                         )
                         session.execute(update_stmt)
 
