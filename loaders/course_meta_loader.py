@@ -39,6 +39,8 @@ def main():
     s3_bucket = args.s3_bucket
     s3_prefix = args.s3_prefix
 
+    term = s3_prefix.split('/')[1]
+
     s3_client = boto3.client('s3')
     course_metadata_stream = s3_client.get_object(
         Bucket=s3_bucket,
@@ -49,21 +51,26 @@ def main():
     records = csv.DictReader(course_metadata)
 
     with session_factory.begin() as session:
-        existing_courses = session.query(Course).all()
+        existing_courses = session.query(Course).filter_by(term=term).all()
+        csv_district_data = {}
 
         for eachRecord in records:
-            for course in existing_courses:
-                if int(eachRecord['course_id']) == course.id:
-                    if eachRecord['district'] != course.district:
-                        update_stmt = (
-                            update(Course)
-                            .where(Course.id == int(eachRecord['course_id']))
-                            .values(
-                                district=eachRecord['district'],
-                                updated_at=datetime.utcnow()
-                            )
-                        )
-                        session.execute(update_stmt)
+            csv_district_data[eachRecord['course_id']] = eachRecord['district']
+
+        for course in existing_courses:
+            course_id_str = str(course.id)
+            csv_district_name = csv_district_data.get(course_id_str)
+            if course_id_str in csv_district_data and \
+                    csv_district_name != course.district:
+                update_stmt = (
+                    update(Course)
+                    .where(Course.id == course.id)
+                    .values(
+                        district=csv_district_name,
+                        updated_at=datetime.utcnow()
+                    )
+                )
+                session.execute(update_stmt)
 
 
 if __name__ == "__main__":  # pragma: no cover

@@ -17,8 +17,8 @@ def setup_database_table():
         session.query(Course).delete()
         insert_stmt = insert(Course).values(
             [
-                {'id': 1, 'name': 'Name 1', 'term': 'Term 1', 'district': ''},
-                {'id': 2, 'name': 'Name 2', 'term': 'Term 2', 'district': ''}
+                {'id': 1, 'name': 'Name 1', 'term': 'term1', 'district': ''},
+                {'id': 2, 'name': 'Name 2', 'term': 'term1', 'district': None}
             ]
         )
         session.execute(insert_stmt)
@@ -37,6 +37,10 @@ def test_course_meta_loader(mocker):
         {
             "course_id": 2,
             "district": "Azeroth School District",
+        },
+        {
+            "course_id": 3,
+            "district": "Faerun School District"
         }
     ]
 
@@ -57,7 +61,7 @@ def test_course_meta_loader(mocker):
             {"Body": mock_bytes_1},
             expected_params={
                 "Bucket": "testbucket",
-                "Key": "course/term/automation/courses.csv",
+                "Key": "course/term1/automation/courses.csv",
             }
     )
 
@@ -69,13 +73,12 @@ def test_course_meta_loader(mocker):
 
     mocker.patch(
         "sys.argv",
-        ["", "testbucket", "course/term/automation/courses.csv"]
+        ["", "testbucket", "course/term1/automation/courses.csv"]
         )
     course_meta_loader.main()
 
     with course_meta_loader.session_factory.begin() as session:
         course_metadata = session.query(Course).all()
-
         assert course_metadata[0].district == "Halo School District"
         assert course_metadata[1].district == "Azeroth School District"
 
@@ -103,12 +106,12 @@ def test_course_meta_loader(mocker):
         {"Body": mock_bytes_2},
         expected_params={
             "Bucket": "testbucket",
-            "Key": "course/term/automation/courses.csv",
+            "Key": "course/term1/automation/courses.csv",
         }
     )
     mocker.patch(
         "sys.argv",
-        ["", "testbucket", "course/term/automation/courses.csv"]
+        ["", "testbucket", "course/term1/automation/courses.csv"]
         )
     course_meta_loader.main()
 
