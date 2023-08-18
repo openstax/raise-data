@@ -50,8 +50,7 @@ def test_course_meta_loader(mocker):
         mock_course_metadata_bytes, fieldnames=mock_fieldnames
         )
     writer.writeheader()
-    writer.writerow(mock_dict_writer_data_1[0])
-    writer.writerow(mock_dict_writer_data_1[1])
+    writer.writerows(mock_dict_writer_data_1)
     mock_course_metadata_bytes.seek(0)
 
     mock_bytes_1 = BytesIO(mock_course_metadata_bytes.read().encode("utf-8"))
@@ -95,8 +94,7 @@ def test_course_meta_loader(mocker):
         }
     ]
 
-    writer.writerow(mock_dict_writer_data_2[0])
-    writer.writerow(mock_dict_writer_data_2[1])
+    writer.writerows(mock_dict_writer_data_2)
     mock_course_metadata_bytes.seek(0)
 
     mock_bytes_2 = BytesIO(mock_course_metadata_bytes.read().encode("utf-8"))
