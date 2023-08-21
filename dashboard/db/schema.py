@@ -1,4 +1,5 @@
 from uuid import UUID
+from typing import Optional
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy import UniqueConstraint
 from datetime import datetime, date
@@ -18,6 +19,7 @@ class Course(Base):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=False)
     name: Mapped[str]
     term: Mapped[str]
+    district: Mapped[Optional[str]]
 
 
 class EventUserEnrollment(Base):
