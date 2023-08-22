@@ -41,7 +41,10 @@ spec:
                   name: {{ $.Chart.Name }}-dashboard
                   key: pgPassword
             - name: POSTGRES_SERVER
-              value: {{ $.Values.dashboard.pgServer }}
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ $.Chart.Name }}-config
+                  key: pgServer
             - name: POSTGRES_DB
               value: raisemetrics
             - name: DATA_TYPE

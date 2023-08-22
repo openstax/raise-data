@@ -36,7 +36,10 @@ spec:
                   name: {{ .Chart.Name }}-dashboard
                   key: pgPassword
             - name: MB_DB_HOST
-              value: {{ .Values.dashboard.pgServer }}
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Chart.Name }}-config
+                  key: pgServer
             - name: MB_DB_PORT
               value: "5432"
           ports:
