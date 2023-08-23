@@ -48,6 +48,33 @@ spec:
               secretKeyRef:
                 name: raise-data-moodle-creds
                 key: token
+    - name: push-course-meta
+      serviceAccountName: raise-data
+      container:
+        image: 361171574891.dkr.ecr.us-east-1.amazonaws.com/raise-data:latest
+        command:
+          - "bash"
+          - "-cxe"
+          - |
+            course-meta-loader raise-data algebra1/ay2023/automation/courses.csv
+        env:
+          - name: POSTGRES_USER
+            valueFrom:
+              secretKeyRef:
+                name: raise-data-dashboard
+                key: pgUsername
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: raise-data-dashboard
+                key: pgPassword
+          - name: POSTGRES_SERVER
+            valueFrom:
+              configMapKeyRef:
+                name: raise-data-config
+                key: pgServer
+          - name: POSTGRES_DB
+            value: raisemetrics
     - name: flow
       dag:
         tasks:
@@ -55,3 +82,7 @@ spec:
           template: push-users
         - name: push-grades
           template: push-grades
+        - name: push-course-meta
+          template: push-course-meta
+          dependencies:
+            - push-users
