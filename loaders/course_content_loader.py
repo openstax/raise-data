@@ -53,22 +53,21 @@ def main():
 
     with session_factory.begin() as session:
         for eachRecord in records:
-            visible = eachRecord['visible'] == '1'
-            eachRecord['visible'] = visible
-            eachRecord['term'] = term
 
             record_data = {
+                'content_id': eachRecord['content_id'],
                 'section': eachRecord['section'],
                 'activity_name': eachRecord['activity_name'],
                 'lesson_page': eachRecord['lesson_page'],
-                'visible': visible,
+                'visible': eachRecord['visible'] == '1',
+                'term': term,
                 'updated_at': datetime.utcnow(),
             }
 
             insert_stmt = insert(CourseContent).values(**record_data)
             do_update_stmt = insert_stmt.on_conflict_do_update(
                 index_elements=['term', 'content_id'],
-                set_=record_data  # Use the filtered dictionary here
+                set_=record_data
             )
             session.execute(do_update_stmt)
 
