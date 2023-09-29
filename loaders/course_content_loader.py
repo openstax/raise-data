@@ -61,13 +61,19 @@ def main():
                 'lesson_page': eachRecord['lesson_page'],
                 'visible': eachRecord['visible'] == '1',
                 'term': term,
-                'updated_at': datetime.utcnow(),
             }
 
             insert_stmt = insert(CourseContent).values(**record_data)
             do_update_stmt = insert_stmt.on_conflict_do_update(
                 index_elements=['term', 'content_id'],
-                set_=record_data
+                set_=dict(
+                    section=record_data['section'],
+                    activity_name=record_data['activity_name'],
+                    lesson_page=record_data['lesson_page'],
+                    visible=record_data['visible'],
+                    updated_at=datetime.utcnow()
+                )
+
             )
             session.execute(do_update_stmt)
 

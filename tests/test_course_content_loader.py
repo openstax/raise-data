@@ -28,7 +28,7 @@ def test_course_content_loader(mocker):
             "activity_name": "Activity Name 1",
             "lesson_page": "Lesson Page 1",
             "visible": "1",
-            "unexpected_column": '1'
+            "unexpected_column": "1"
         },
         {
             "content_id": "12a34b5c-e11e-4704-a2c7-92851aca4464",
@@ -36,7 +36,7 @@ def test_course_content_loader(mocker):
             "activity_name": "Activity Name 2",
             "lesson_page": "Lesson Page 2",
             "visible": "0",
-            "unexpected_column": '1'
+            "unexpected_column": "1"
         }
     ]
 
@@ -101,14 +101,17 @@ def test_course_content_loader(mocker):
             "section": "Section 1",
             "activity_name": "Activity Name 1",
             "lesson_page": "Lesson Page 1",
-            "visible": "1"
+            "visible": "1",
+            "unexpected_column": "1"
         },
         {
             "content_id": "12a34b5c-e11e-4704-a2c7-92851aca4464",
             "section": "Section 2",
             "activity_name": "Math Is Fun Activity Name",
             "lesson_page": "Lesson Page 2",
-            "visible": "0"
+            "visible": "0",
+            "unexpected_column": "1"
+
         }
     ]
 
