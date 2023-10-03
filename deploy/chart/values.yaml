@@ -51,7 +51,7 @@ moodleDashboardProcessor:
 dashboard:
   domain: metrics.raiselearning.org
   replicas: 2
-  metabaseVersion: v0.46.6.4
+  metabaseVersion: v0.47.3
   pgServer:
   pgUsername:
   pgPassword:
