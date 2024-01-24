@@ -3,12 +3,12 @@ import boto3
 import csv
 import os
 from io import StringIO
-from datetime import datetime, timezone
 from sqlalchemy import create_engine
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import sessionmaker
 from raise_data.dashboard.schema import (
-     CourseContent
+     CourseContent,
+     generate_utc_timestamp
 )
 
 pg_server = os.getenv("POSTGRES_SERVER", "")
@@ -71,7 +71,7 @@ def main():
                     activity_name=record_data['activity_name'],
                     lesson_page=record_data['lesson_page'],
                     visible=record_data['visible'],
-                    updated_at=datetime.now(timezone.utc)
+                    updated_at=generate_utc_timestamp()
                 )
 
             )
