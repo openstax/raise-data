@@ -188,7 +188,7 @@ def process_moodle_grades_data(course_id, grades_data):
                 index_elements=['course_id', 'date', 'quiz_name'],
                 set_=dict(
                     quiz_attempts=item["quiz_attempts"],
-                    updated_at=datetime.utcnow()
+                    updated_at=datetime.now(timezone.utc)
                 )
             )
             session.execute(do_update_stmt)

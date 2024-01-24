@@ -3,7 +3,7 @@ import boto3
 import csv
 import os
 from io import StringIO
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy import create_engine, update
 from sqlalchemy.orm import sessionmaker
 from raise_data.dashboard.schema import (
@@ -67,7 +67,7 @@ def main():
                     .where(Course.id == course.id)
                     .values(
                         district=csv_district_name,
-                        updated_at=datetime.utcnow()
+                        updated_at=datetime.now(timezone.utc)
                     )
                 )
                 session.execute(update_stmt)

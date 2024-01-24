@@ -2,14 +2,20 @@ from uuid import UUID
 from typing import Optional
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy import UniqueConstraint
-from datetime import datetime, date
+from datetime import datetime, date, timezone
+
+
+def generate_utc_timestamp():
+    return datetime.now(timezone.utc)
 
 
 class Base(DeclarativeBase):
-    created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(
+        default=generate_utc_timestamp
+    )
     updated_at: Mapped[datetime] = mapped_column(
-        default=datetime.utcnow,
-        onupdate=datetime.utcnow
+        default=generate_utc_timestamp,
+        onupdate=generate_utc_timestamp
     )
 
 
