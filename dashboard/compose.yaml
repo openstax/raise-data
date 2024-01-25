@@ -1,6 +1,6 @@
 services:
   metabase:
-    image: metabase/metabase:v0.47.3
+    image: metabase/metabase:v0.48.3
     networks:
       - dashboard
     ports:

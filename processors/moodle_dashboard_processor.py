@@ -12,7 +12,7 @@ from sqlalchemy.orm import sessionmaker
 from .common import ProcessorException, processor_runner, \
     commit_ignoring_unique_violations
 from raise_data.dashboard.schema import Course, EventUserEnrollment, \
-    CourseActivityStat, CourseQuizStat
+    CourseActivityStat, CourseQuizStat, generate_utc_timestamp
 
 
 logging.basicConfig(level=logging.INFO)
@@ -188,7 +188,7 @@ def process_moodle_grades_data(course_id, grades_data):
                 index_elements=['course_id', 'date', 'quiz_name'],
                 set_=dict(
                     quiz_attempts=item["quiz_attempts"],
-                    updated_at=datetime.utcnow()
+                    updated_at=generate_utc_timestamp()
                 )
             )
             session.execute(do_update_stmt)
