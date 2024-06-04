@@ -20,8 +20,8 @@ spec:
           - "bash"
           - "-cxe"
           - |
-            aws s3 cp s3://raise-data/algebra1/ay2023/automation/courses.csv courses.csv
-            moodle-cli export-bulk courses.csv raise-data algebra1/ay2023/moodle/users users
+            aws s3 cp s3://raise-data/algebra1/ay2024/automation/courses.csv courses.csv
+            moodle-cli export-bulk courses.csv raise-data algebra1/ay2024/moodle/users users
         env:
           - name: MOODLE_URL
             value: https://raiselearning.org
@@ -38,8 +38,8 @@ spec:
           - "bash"
           - "-cxe"
           - |
-            aws s3 cp s3://raise-data/algebra1/ay2023/automation/courses.csv courses.csv
-            moodle-cli export-bulk courses.csv raise-data algebra1/ay2023/moodle/grades grades
+            aws s3 cp s3://raise-data/algebra1/ay2024/automation/courses.csv courses.csv
+            moodle-cli export-bulk courses.csv raise-data algebra1/ay2024/moodle/grades grades
         env:
           - name: MOODLE_URL
             value: https://raiselearning.org
@@ -56,7 +56,7 @@ spec:
           - "bash"
           - "-cxe"
           - |
-            course-meta-loader raise-data algebra1/ay2023/automation/courses.csv
+            course-meta-loader raise-data algebra1/ay2024/automation/courses.csv
         env:
           - name: POSTGRES_USER
             valueFrom:
