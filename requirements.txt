@@ -1,2 +1,2 @@
-awscli==1.32.95
-git+https://github.com/openstax/raise-moodlecli@bb8c6e4
+awscli==1.33.28
+git+https://github.com/openstax/raise-moodlecli@04ba3aa
